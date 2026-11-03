@@ -6,6 +6,7 @@ import { propertyConfig } from "@/config/property";
 import { BookingForm } from "@/components/booking-form";
 import { Gallery } from "@/components/gallery";
 import { SiteHeader } from "@/components/site-header";
+import { AvailabilityCalendar } from "@/components/availability-calendar";
 
 const listing = propertyConfig.property.listingUrl;
 const amenities = [
@@ -79,7 +80,7 @@ export default function HomePage() {
 
       <section className="section" id="faq"><div className="container"><div className="section-heading"><span className="eyebrow">{w("Preguntas frecuentes", "Frequently asked questions")}</span><h2>{w("Antes de planear tu estancia.", "Before planning your stay.")}</h2></div><div className="faq-list">{faq.map(([question, answer]) => <details className="faq-item" key={question}><summary>{question}</summary><p>{answer}</p></details>)}</div></div></section>
 
-      <section className="section booking" id="consulta"><div className="container booking-grid"><div><span className="eyebrow">{w("Consulta directa", "Direct inquiry")}</span><h2>{w("Cuéntanos las fechas de tu viaje.", "Tell us your travel dates.")}</h2><p>{w("Envía una solicitud para conocer disponibilidad y precio. La respuesta y la confirmación se realizan manualmente.", "Send an inquiry to ask about availability and price. Responses and confirmation are handled manually.")}</p><p className="subnote">{w("También puedes escribir directamente al", "You can also message us directly at")} <a href={`https://wa.me/${propertyConfig.booking.whatsappNumber}`}><strong>{propertyConfig.booking.whatsappDisplayNumber}</strong></a>.</p></div><BookingForm /></div></section>
+      <section className="section booking" id="consulta"><div className="container booking-grid"><div><span className="eyebrow">{w("Consulta directa", "Direct inquiry")}</span><h2>{w("Cuéntanos las fechas de tu viaje.", "Tell us your travel dates.")}</h2><p>{w("Envía una solicitud para conocer disponibilidad y precio. La respuesta y la confirmación se realizan manualmente.", "Send an inquiry to ask about availability and price. Responses and confirmation are handled manually.")}</p><p className="subnote">{w("También puedes escribir directamente al", "You can also message us directly at")} <a href={`https://wa.me/${propertyConfig.booking.whatsappNumber}`}><strong>{propertyConfig.booking.whatsappDisplayNumber}</strong></a>.</p><AvailabilityCalendar /></div><BookingForm /></div></section>
 
       <section className="cta"><div className="container"><span className="eyebrow">HOMUN · {w("Residencial Izamal", "Residencial Izamal")}</span><h2>{w("Tu hogar para disfrutar Cancún.", "Your home to enjoy Cancún.")}</h2><p>{w("Planea tu estancia y consulta tus fechas con nosotros.", "Plan your stay and ask us about your dates.")}</p><a className="button" href="#consulta">{w("Consultar disponibilidad", "Check availability")} ↗</a></div></section>
     </main>
