@@ -55,7 +55,7 @@ export default function HomePage() {
     <SiteHeader />
     <main>
       <section className="hero hero-boutique" id="inicio"><div className="hero-feature">
-        <Image className="hero-cover" src="/images/property/alberca-atardecer-nueva.jpeg" alt="Alberca y edificios de Residencial Izamal al atardecer" fill priority sizes="100vw" />
+        <Image className="hero-cover" src="/images/property/alberca-dia.jpeg" alt="Alberca y edificios de Residencial Izamal" fill priority sizes="100vw" />
         <div className="hero-shade" />
         <div className="hero-feature-copy"><span className="hero-kicker">HOMUN <i /> {w("RESIDENCIAL IZAMAL · CANCÚN", "RESIDENCIAL IZAMAL · CANCÚN")}</span>
           <h1>{w("Tu refugio para disfrutar Cancún.", "Your retreat to enjoy Cancún.")}</h1>
