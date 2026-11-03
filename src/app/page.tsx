@@ -60,7 +60,7 @@ export default function HomePage() {
           <div className="hero-facts"><span>♧ {w("Hasta 6 huéspedes", "Up to 6 guests")}</span><span>⌂ 3 {w("habitaciones", "bedrooms")}</span><span>◫ 2 {w("baños", "bathrooms")}</span></div>
           <div className="hero-actions"><a className="button" href="#consulta">{w("Consultar disponibilidad", "Check availability")} <span aria-hidden="true">↗</span></a><a className="scroll-link" href="#alojamiento">{w("Explorar alojamiento", "Explore the apartment")} ↓</a></div>
         </div>
-        <div className="hero-media"><div className="hero-photo"><Image src="/images/property/sala.jpeg" alt="Sala del departamento Homun" fill priority sizes="(max-width: 900px) 100vw, 50vw" /></div><span className="placeholder-label">{w("Fotografía original del alojamiento", "Original property photo")}</span></div>
+        <div className="hero-media"><div className="hero-photo"><Image src="/images/property/sala-retocada.png" alt="Sala del departamento Homun con retoque digital" fill priority sizes="(max-width: 900px) 100vw, 50vw" /></div><span className="placeholder-label">{w("Foto con retoque digital", "Digitally retouched photo")}</span></div>
       </div></section>
       <div className="container"><div className="stat-band"><div className="stat"><strong>6</strong><span>{w("huéspedes máximo", "guests maximum")}</span></div><div className="stat"><strong>3</strong><span>{w("habitaciones", "bedrooms")}</span></div><div className="stat"><strong>2</strong><span>{w("baños", "bathrooms")}</span></div><div className="stat"><strong>1</strong><span>{w("estacionamiento incluido", "parking space included")}</span></div></div></div>
 

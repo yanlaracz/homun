@@ -15,7 +15,7 @@ export function Gallery() {
         <span className="gallery-label">{item.label}</span>
       </div>)}
     </div>
-    <p className="gallery-help">Fotografías originales del departamento y las áreas compartidas del residencial.</p>
+    <p className="gallery-help">Fotos mejoradas digitalmente a partir de las imágenes del alojamiento; la luz, el color y algunos detalles pueden diferir de la escena original.</p>
     {active !== null && <div className="lightbox" role="dialog" aria-modal="true" aria-label={`Fotografía: ${galleryItems[active].label}`} onClick={() => setActive(null)} onKeyDown={(event) => { if (event.key === "Escape") setActive(null); }}>
       <div className="lightbox-content" onClick={(event) => event.stopPropagation()}>
         <button className="lightbox-close" onClick={() => setActive(null)} aria-label="Cerrar fotografía">×</button>

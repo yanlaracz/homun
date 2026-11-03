@@ -37,15 +37,9 @@ export const propertyConfig = {
 } as const;
 
 export const galleryItems = [
-  { src: "sala.jpeg", alt: "Sala del departamento con sofá, sillas y mesa de madera", label: "Sala" },
-  { src: "comedor.jpeg", alt: "Comedor de madera junto a la cocina", label: "Comedor" },
-  { src: "recamara-principal.jpeg", alt: "Recámara con cama y aire acondicionado", label: "Recámara" },
-  { src: "recamara-dos.jpeg", alt: "Segunda recámara con cama matrimonial", label: "Segunda recámara" },
-  { src: "recamara-tres.jpeg", alt: "Tercera recámara con cama matrimonial", label: "Tercera recámara" },
-  { src: "bano.jpeg", alt: "Lavabo del baño con amenidades", label: "Baño" },
-  { src: "alberca-dia.jpeg", alt: "Alberca compartida del residencial durante el día", label: "Alberca" },
-  { src: "alberca-atardecer.jpeg", alt: "Alberca compartida al atardecer", label: "Alberca al atardecer" },
-  { src: "camastros.jpeg", alt: "Camastros junto a la alberca compartida", label: "Camastros" },
-  { src: "areas-verdes.jpeg", alt: "Jardines y áreas verdes del residencial", label: "Áreas verdes" },
-  { src: "juegos.jpeg", alt: "Área de juegos infantiles del residencial", label: "Juegos infantiles" },
+  { src: "sala-retocada.png", alt: "Sala del departamento con sofá, sillas y mesa de madera; foto con retoque digital", label: "Sala" },
+  { src: "recamara-retocada.png", alt: "Recámara con cama y aire acondicionado; foto con retoque digital", label: "Recámara" },
+  { src: "jardin-retocado.png", alt: "Jardines y áreas verdes del residencial; foto con retoque digital", label: "Áreas verdes" },
+  { src: "alberca-retocada.png", alt: "Alberca compartida del residencial; foto con retoque digital", label: "Alberca" },
+  { src: "camastros-retocados.png", alt: "Camastros junto a la alberca compartida; foto con retoque digital", label: "Camastros" },
 ];
