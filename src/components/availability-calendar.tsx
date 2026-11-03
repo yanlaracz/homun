@@ -5,13 +5,17 @@ import { useEffect, useMemo, useState } from "react";
 type CalendarState = { configured: boolean; busyDates: string[]; error?: boolean };
 const weekdays = ["L", "M", "M", "J", "V", "S", "D"];
 
-export function AvailabilityCalendar() {
+type DateRange = { checkIn: string; checkOut: string };
+
+export function AvailabilityCalendar({ onSelectRange }: { onSelectRange: (range: DateRange | null) => void }) {
   const [month, setMonth] = useState(() => {
     const today = new Date();
     return new Date(today.getFullYear(), today.getMonth(), 1);
   });
   const [calendar, setCalendar] = useState<CalendarState | null>(null);
   const [english, setEnglish] = useState(false);
+  const [selected, setSelected] = useState<DateRange | null>(null);
+  const [choosing, setChoosing] = useState("");
 
   useEffect(() => {
     const listener = (event: Event) => setEnglish((event as CustomEvent<string>).detail === "en");
@@ -39,9 +43,36 @@ export function AvailabilityCalendar() {
     setMonth((value) => new Date(value.getFullYear(), value.getMonth() + delta, 1));
   }
 
+  function selectDate(iso: string) {
+    if (!selected || selected.checkOut || iso <= selected.checkIn) {
+      const next = { checkIn: iso, checkOut: "" };
+      setSelected(next);
+      onSelectRange(null);
+      setChoosing(english ? "Choose your check-out date." : "Ahora elige tu fecha de salida.");
+      return;
+    }
+
+    const cursor = new Date(`${selected.checkIn}T12:00:00Z`);
+    const last = new Date(`${iso}T12:00:00Z`);
+    while (cursor < last) {
+      if (busyDates.has(cursor.toISOString().slice(0, 10))) {
+        setChoosing(english ? "Those dates include unavailable nights. Choose another check-in date." : "Ese rango incluye noches ocupadas. Elige otra fecha de entrada.");
+        setSelected(null);
+        onSelectRange(null);
+        return;
+      }
+      cursor.setUTCDate(cursor.getUTCDate() + 1);
+    }
+
+    const next = { checkIn: selected.checkIn, checkOut: iso };
+    setSelected(next);
+    onSelectRange(next);
+    setChoosing(english ? "Dates selected. Review the estimated total below." : "Fechas seleccionadas. Revisa el total estimado abajo.");
+  }
+
   return <div className="availability-card" aria-label={english ? "Availability calendar" : "Calendario de disponibilidad"}>
     <div className="availability-heading">
-      <div><h3>{english ? "Availability calendar" : "Calendario de disponibilidad"}</h3><p>{english ? "Check dates before sending your inquiry." : "Revisa las fechas antes de enviar tu consulta."}</p></div>
+      <div><h3>{english ? "Choose your dates" : "Elige tus fechas"}</h3><p>{english ? "Select check-in, then check-out." : "Toca la entrada y después la salida."}</p></div>
       <div className="calendar-controls"><button type="button" onClick={() => changeMonth(-1)} aria-label={english ? "Previous month" : "Mes anterior"}>‹</button><button type="button" onClick={() => changeMonth(1)} aria-label={english ? "Next month" : "Mes siguiente"}>›</button></div>
     </div>
     <div className="calendar-month">{label}</div>
@@ -53,13 +84,16 @@ export function AvailabilityCalendar() {
         const iso = `${month.getFullYear()}-${String(month.getMonth() + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
         const past = date < today;
         const busy = busyDates.has(iso);
-        const className = ["calendar-day", past ? "past" : "", busy ? "busy" : ""].filter(Boolean).join(" ");
-        return <span className={className} key={iso} aria-label={`${iso}${busy ? (english ? ", unavailable" : ", no disponible") : ""}`}>{day}</span>;
+        const inRange = !!selected && iso >= selected.checkIn && !!selected.checkOut && iso <= selected.checkOut;
+        const isEdge = !!selected && (iso === selected.checkIn || iso === selected.checkOut);
+        const className = ["calendar-day", past ? "past" : "", busy ? "busy" : "", inRange ? "in-range" : "", isEdge ? "selected" : ""].filter(Boolean).join(" ");
+        return <button className={className} key={iso} type="button" disabled={past || busy} onClick={() => selectDate(iso)} aria-label={`${iso}${busy ? (english ? ", unavailable" : ", no disponible") : ""}`} aria-pressed={isEdge}>{day}</button>;
       })}
     </div>
-    <div className="calendar-legend"><span><i className="legend-dot busy-dot" />{english ? "Unavailable" : "No disponible"}</span><span><i className="legend-dot" />{english ? "Ask to confirm" : "Consultar disponibilidad"}</span></div>
+    <div className="calendar-legend"><span><i className="legend-dot busy-dot" />{english ? "Unavailable" : "No disponible"}</span><span><i className="legend-dot" />{english ? "Available to select" : "Disponible para elegir"}</span></div>
+    {choosing && <p className="calendar-selection" role="status">{choosing}</p>}
     <p className={`calendar-status ${calendar?.error ? "status-error" : ""}`} role="status">
-      {!calendar ? (english ? "Loading calendar…" : "Cargando calendario…") : calendar.error ? (english ? "Calendar could not be updated. Please confirm dates by WhatsApp." : "No se pudo actualizar el calendario. Confirma las fechas por WhatsApp.") : calendar.configured ? (english ? "Airbnb calendar connected by iCal. Updates may take up to 3 hours; confirm before booking." : "Calendario de Airbnb conectado por iCal. Puede tardar hasta 3 horas en actualizarse; confirma antes de reservar.") : (english ? "Airbnb calendar not connected yet. Dates are not confirmed until we reply." : "Aún no está conectado el calendario de Airbnb. Las fechas no se confirman hasta recibir respuesta.")}
+      {!calendar ? (english ? "Loading calendar…" : "Cargando calendario…") : calendar.error ? (english ? "Could not update Airbnb dates. Contact us before paying." : "No se pudieron actualizar las fechas de Airbnb. Contáctanos antes de pagar.") : calendar.configured ? (english ? "Airbnb dates appear here via iCal. This site does not send its bookings back to Airbnb, so the calendars must be managed separately." : "Aquí aparecen las fechas de Airbnb por iCal. Esta página no envía sus reservas a Airbnb; los calendarios se administran por separado.") : (english ? "Airbnb calendar is not connected. Dates shown here may not include Airbnb bookings." : "El calendario de Airbnb no está conectado. Las fechas de aquí podrían no incluir reservas de Airbnb.")}
     </p>
   </div>;
 }

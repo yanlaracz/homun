@@ -28,7 +28,10 @@ export const propertyConfig = {
     manualConfirmation: true,
     onlinePaymentsEnabled: false,
     liveAvailabilityEnabled: false,
+    cancellationPolicy: { fullRefundBeforeDays: 30, halfRefundBeforeDays: 14, halfRefundPercent: 50 },
+    securityDeposit: { paymentMethods: ["cash", "bank transfer"], refundableAfterCheckout: true },
   },
+  pricing: { currency: "MXN", standardNightlyRate: 900, decemberNightlyRate: 1000, decemberMonth: 12 },
   media: { directory: "/images/property/", useOriginalPropertyPhotos: false, generatedPropertyPhotosAllowed: true },
   seo: {
     title: "Homun en Residencial Izamal | Departamento vacacional en Cancún",

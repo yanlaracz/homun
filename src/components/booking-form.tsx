@@ -1,62 +1,60 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { propertyConfig } from "@/config/property";
 
-export function BookingForm() {
-  const [error, setError] = useState("");
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+type DateRange = { checkIn: string; checkOut: string };
 
-  function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const form = new FormData(event.currentTarget);
-    const name = String(form.get("name") ?? "").trim();
-    const checkIn = String(form.get("checkIn") ?? "");
-    const checkOut = String(form.get("checkOut") ?? "");
-    const guests = Number(form.get("guests"));
-    const optionalMessage = String(form.get("message") ?? "").trim();
-    const errors: Record<string, string> = {};
+function formatDate(value: string, english: boolean) {
+  if (!value) return "—";
+  return new Date(`${value}T12:00:00`).toLocaleDateString(english ? "en-US" : "es-MX", { day: "numeric", month: "short", year: "numeric" });
+}
 
-    if (!name) errors.name = "Escribe tu nombre.";
-    if (!checkIn) errors.checkIn = "Selecciona la fecha de entrada.";
-    if (!checkOut) errors.checkOut = "Selecciona la fecha de salida.";
-    if (checkIn && checkOut && checkOut <= checkIn) errors.checkOut = "La salida debe ser posterior a la entrada.";
-    if (!Number.isInteger(guests) || guests < 1 || guests > propertyConfig.property.maxGuests) errors.guests = `Elige de 1 a ${propertyConfig.property.maxGuests} huéspedes.`;
-    setFieldErrors(errors);
-    setError("");
-    if (Object.keys(errors).length) {
-      setError("Revisa los campos señalados para continuar.");
-      return;
-    }
-
-    const message = [
-      `Hola, me interesa hospedarme en ${propertyConfig.brand.fullName}.`,
-      "",
-      `Nombre: ${name}`,
-      `Entrada: ${checkIn}`,
-      `Salida: ${checkOut}`,
-      `Huéspedes: ${guests}`,
-      "",
-      "¿Podrían confirmarme la disponibilidad y el precio total de la estancia?",
-      optionalMessage ? `\nMensaje: ${optionalMessage}` : "",
-    ].filter(Boolean).join("\n");
-    window.open(`https://wa.me/${propertyConfig.booking.whatsappNumber}?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
+function estimateStay(range: DateRange | null) {
+  if (!range?.checkIn || !range.checkOut) return null;
+  const { standardNightlyRate, decemberNightlyRate, decemberMonth } = propertyConfig.pricing;
+  const cursor = new Date(`${range.checkIn}T12:00:00Z`);
+  const last = new Date(`${range.checkOut}T12:00:00Z`);
+  let nights = 0;
+  let total = 0;
+  const decemberNights = [] as string[];
+  while (cursor < last) {
+    const iso = cursor.toISOString().slice(0, 10);
+    const isDecember = cursor.getUTCMonth() + 1 === decemberMonth;
+    total += isDecember ? decemberNightlyRate : standardNightlyRate;
+    if (isDecember) decemberNights.push(iso);
+    nights += 1;
+    cursor.setUTCDate(cursor.getUTCDate() + 1);
   }
+  return { nights, total, decemberNights: decemberNights.length, regularNights: nights - decemberNights.length };
+}
 
-  const minDate = new Date().toLocaleDateString("en-CA");
-  return (
-    <form className="booking-card" onSubmit={submit} noValidate>
-      <div className="form-grid">
-        <div className="field field-wide"><label htmlFor="name">Tu nombre</label><input id="name" name="name" autoComplete="name" aria-invalid={!!fieldErrors.name} aria-describedby={fieldErrors.name ? "name-error" : undefined} />{fieldErrors.name && <span id="name-error" className="field-error">{fieldErrors.name}</span>}</div>
-        <div className="field"><label htmlFor="checkIn">Entrada</label><input id="checkIn" name="checkIn" type="date" min={minDate} aria-invalid={!!fieldErrors.checkIn} aria-describedby={fieldErrors.checkIn ? "checkin-error" : undefined} />{fieldErrors.checkIn && <span id="checkin-error" className="field-error">{fieldErrors.checkIn}</span>}</div>
-        <div className="field"><label htmlFor="checkOut">Salida</label><input id="checkOut" name="checkOut" type="date" min={minDate} aria-invalid={!!fieldErrors.checkOut} aria-describedby={fieldErrors.checkOut ? "checkout-error" : undefined} />{fieldErrors.checkOut && <span id="checkout-error" className="field-error">{fieldErrors.checkOut}</span>}</div>
-        <div className="field field-wide"><label htmlFor="guests">Huéspedes</label><select id="guests" name="guests" defaultValue="2" aria-invalid={!!fieldErrors.guests} aria-describedby={fieldErrors.guests ? "guests-error" : undefined}>{Array.from({ length: propertyConfig.property.maxGuests }, (_, index) => index + 1).map((number) => <option key={number} value={number}>{number} {number === 1 ? "huésped" : "huéspedes"}</option>)}</select>{fieldErrors.guests && <span id="guests-error" className="field-error">{fieldErrors.guests}</span>}</div>
-        <div className="field field-wide"><label htmlFor="message">Mensaje opcional</label><textarea id="message" name="message" placeholder="Cuéntanos algo que debamos saber" /></div>
-      </div>
-      {error && <p role="alert" className="form-error">{error}</p>}
-      <p className="form-help">Esta solicitud no confirma una reservación. La disponibilidad y el precio se confirmarán manualmente por WhatsApp.</p>
-      <button className="button" type="submit">Continuar por WhatsApp <span aria-hidden="true">↗</span></button>
-      <p className="privacy">Los datos se usan solo para preparar el mensaje en WhatsApp. Este sitio no los guarda ni los envía a un servidor.</p>
-    </form>
-  );
+export function BookingForm({ selectedRange }: { selectedRange: DateRange | null }) {
+  const [english, setEnglish] = useState(false);
+  const [guests, setGuests] = useState("2");
+  useEffect(() => {
+    const listener = (event: Event) => setEnglish((event as CustomEvent<string>).detail === "en");
+    document.addEventListener("homun-language", listener);
+    return () => document.removeEventListener("homun-language", listener);
+  }, []);
+
+  const estimate = useMemo(() => estimateStay(selectedRange), [selectedRange]);
+  const { standardNightlyRate, decemberNightlyRate } = propertyConfig.pricing;
+  const policy = propertyConfig.booking.cancellationPolicy;
+  const whatsappText = english
+    ? `Hello, I have a question before booking at ${propertyConfig.brand.fullName}. Dates: ${selectedRange ? `${selectedRange.checkIn} to ${selectedRange.checkOut || "not selected"}` : "not selected"}. Guests: ${guests}.`
+    : `Hola, tengo una duda antes de reservar en ${propertyConfig.brand.fullName}. Fechas: ${selectedRange ? `${selectedRange.checkIn} al ${selectedRange.checkOut || "sin seleccionar"}` : "sin seleccionar"}. Huéspedes: ${guests}.`;
+
+  return <div className="booking-card">
+    <div className="booking-summary">
+      <h3>{english ? "Your stay" : "Tu estancia"}</h3>
+      <div className="booking-dates"><span><small>{english ? "Check-in" : "Entrada"}</small><strong>{formatDate(selectedRange?.checkIn ?? "", english)}</strong></span><span aria-hidden="true">→</span><span><small>{english ? "Check-out" : "Salida"}</small><strong>{formatDate(selectedRange?.checkOut ?? "", english)}</strong></span></div>
+      <label className="guest-select" htmlFor="booking-guests">{english ? "Guests" : "Huéspedes"}<select id="booking-guests" value={guests} onChange={(event) => setGuests(event.target.value)}>{Array.from({ length: propertyConfig.property.maxGuests }, (_, index) => index + 1).map((number) => <option key={number} value={number}>{number}</option>)}</select></label>
+      {estimate ? <div className="price-estimate"><div><span>{estimate.regularNights} {english ? "nights" : "noches"} × ${standardNightlyRate.toLocaleString("es-MX")}</span><strong>${(estimate.regularNights * standardNightlyRate).toLocaleString("es-MX")} MXN</strong></div>{estimate.decemberNights > 0 && <div><span>{estimate.decemberNights} {english ? "December nights" : "noches de diciembre"} × ${decemberNightlyRate.toLocaleString("es-MX")}</span><strong>${(estimate.decemberNights * decemberNightlyRate).toLocaleString("es-MX")} MXN</strong></div>}<div className="price-total"><span>{english ? `Total · ${estimate.nights} nights` : `Total · ${estimate.nights} noches`}</span><strong>${estimate.total.toLocaleString("es-MX")} MXN</strong></div></div> : <p className="price-placeholder">{english ? "Choose check-in and check-out in the calendar to see your estimated total." : "Selecciona entrada y salida en el calendario para ver el total estimado."}</p>}
+      <div className="booking-policy"><p><strong>{english ? "Full stay payment" : "Pago completo de la estancia"}</strong> {english ? "is due at booking. A separate security deposit is paid in cash or by transfer and returned after check-out if there are no issues." : "al reservar. El depósito de seguridad se paga aparte en efectivo o transferencia y se devuelve al finalizar si no hay inconvenientes."}</p><p>{english ? `Cancellation: full refund ${policy.fullRefundBeforeDays}+ days before arrival; ${policy.halfRefundPercent}% refund ${policy.halfRefundBeforeDays}–${policy.fullRefundBeforeDays - 1} days before; no refund within ${policy.halfRefundBeforeDays} days.` : `Cancelación: reembolso completo con ${policy.fullRefundBeforeDays} días o más de anticipación; ${policy.halfRefundPercent}% entre ${policy.halfRefundBeforeDays} y ${policy.fullRefundBeforeDays - 1} días; sin reembolso dentro de los últimos ${policy.halfRefundBeforeDays} días.`}</p></div>
+      <button className="button booking-pay" type="button" disabled>{english ? "Online payment coming soon" : "Pago en línea próximamente"}</button>
+      <p className="payment-note">{english ? "We’re setting up secure online payments. No reservation or charge is made yet." : "Estamos preparando el pago seguro en línea. Por ahora no se confirma ni se cobra ninguna reserva."}</p>
+      <a className="button button-outline contact-before-booking" href={`https://wa.me/${propertyConfig.booking.whatsappNumber}?text=${encodeURIComponent(whatsappText)}`} target="_blank" rel="noreferrer">{english ? "Questions before booking? Talk to us" : "¿Dudas antes de reservar? Habla con nosotros"} <span aria-hidden="true">↗</span></a>
+    </div>
+  </div>;
 }

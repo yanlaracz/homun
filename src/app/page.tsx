@@ -23,11 +23,11 @@ const faqEs = [
   ["¿Hay estacionamiento?", "Sí, se incluye un espacio de estacionamiento."],
   ["¿Tiene cocina equipada?", "Sí, dispone de cocina equipada."],
   ["¿La alberca es privada o compartida?", "La alberca es compartida con otros residentes."],
-  ["¿Cómo puedo consultar disponibilidad?", "Completa el formulario de esta página para enviar una consulta por WhatsApp."],
-  ["¿Cómo se confirma una reservación?", "La consulta no confirma una reserva. La disponibilidad, precio y proceso de confirmación deben acordarse directamente."],
-  ["¿Se aceptan niños?", "Consulta por WhatsApp para confirmar las condiciones aplicables a tu estancia."],
+  ["¿Cuánto cuesta la estancia?", "La tarifa es de $900 MXN por noche, excepto diciembre, cuando es de $1,000 MXN por noche. El sitio calcula un estimado según las fechas seleccionadas."],
+  ["¿Cómo se paga y cuál es el depósito?", "El pago de la estancia será completo al reservar. Además se solicitará un depósito de seguridad en efectivo o transferencia, reembolsable al finalizar si no hay inconvenientes."],
+  ["¿Ya puedo pagar y confirmar la reserva en línea?", "El calendario y el cálculo de precio están en preparación. El pago seguro todavía no está habilitado, así que aún no se confirma ni se cobra una reserva desde la página."],
   ["¿Cuáles son los horarios de entrada y salida?", "Los horarios están pendientes de confirmar. Consúltalos por WhatsApp antes de reservar."],
-  ["¿Cuáles son las políticas de cancelación?", "Las políticas de cancelación están pendientes de confirmar. Solicita los detalles antes de reservar."],
+  ["¿Cuál es la política de cancelación?", "Con 30 días o más antes de la llegada, se reembolsa el total; de 14 a 29 días antes, se reembolsa el 50%; dentro de los últimos 14 días no hay reembolso."],
 ];
 const faqEn = [
   ["How many guests can stay?", "The stated capacity is up to 6 guests."],
@@ -35,15 +35,16 @@ const faqEn = [
   ["Is parking available?", "Yes, one parking space is included."],
   ["Is there an equipped kitchen?", "Yes, the apartment has an equipped kitchen."],
   ["Is the pool private or shared?", "The pool is shared with other residents."],
-  ["How can I check availability?", "Use the form on this page to send an inquiry through WhatsApp."],
-  ["How is a reservation confirmed?", "An inquiry does not confirm a booking. Availability, price, and the confirmation process must be agreed directly."],
-  ["Are children welcome?", "Please contact us on WhatsApp to confirm the conditions for your stay."],
+  ["How much does a stay cost?", "The rate is MXN $900 per night, except December, when it is MXN $1,000 per night. The site estimates the total for selected dates."],
+  ["How do payment and the security deposit work?", "The full stay will be due at booking. A separate security deposit is paid in cash or by transfer and returned after check-out if there are no issues."],
+  ["Can I pay and confirm a booking online yet?", "The calendar and price estimate are being prepared. Secure online payment is not active yet, so the site cannot confirm or charge a booking yet."],
   ["What are the check-in and check-out times?", "The times are still to be confirmed. Please ask on WhatsApp before booking."],
-  ["What is the cancellation policy?", "The cancellation policy is still to be confirmed. Please ask for details before booking."],
+  ["What is the cancellation policy?", "30 or more days before arrival: full refund; 14–29 days: 50% refund; within 14 days: no refund."],
 ];
 
 export default function HomePage() {
   const [en, setEn] = useState(false);
+  const [selectedRange, setSelectedRange] = useState<{ checkIn: string; checkOut: string } | null>(null);
   useEffect(() => {
     const listener = (event: Event) => setEn((event as CustomEvent<string>).detail === "en");
     document.addEventListener("homun-language", listener);
@@ -59,7 +60,7 @@ export default function HomePage() {
           <h1>{w("Más espacio para disfrutar Cancún.", "More room to enjoy Cancún.")}</h1>
           <p>{w("Bienvenido a Homun, un departamento cómodo y funcional en la Zona Sur de Cancún. Un espacio para reunirse, descansar y organizar tus días a tu ritmo.", "Welcome to Homun, a comfortable and practical apartment in southern Cancún. A place to gather, unwind, and plan each day at your own pace.")}</p>
           <div className="hero-facts"><span>♧ {w("Hasta 6 huéspedes", "Up to 6 guests")}</span><span>⌂ 3 {w("habitaciones", "bedrooms")}</span><span>◫ 2 {w("baños", "bathrooms")}</span></div>
-          <div className="hero-actions"><a className="button" href="#consulta">{w("Consultar disponibilidad", "Check availability")} <span aria-hidden="true">↗</span></a><a className="scroll-link" href="#alojamiento">{w("Explorar alojamiento", "Explore the apartment")} ↓</a></div>
+          <div className="hero-actions"><a className="button" href="#consulta">{w("Ver fechas y precio", "See dates and price")} <span aria-hidden="true">↗</span></a><a className="scroll-link" href="#alojamiento">{w("Explorar alojamiento", "Explore the apartment")} ↓</a></div>
         </div>
         <div className="hero-media"><Image src="/images/property/sala-principal.jpeg" alt="Sala del departamento Homun" fill priority sizes="(max-width: 900px) 100vw, 50vw" /></div>
       </div></section>
@@ -80,10 +81,10 @@ export default function HomePage() {
 
       <section className="section" id="faq"><div className="container"><div className="section-heading"><span className="eyebrow">{w("Preguntas frecuentes", "Frequently asked questions")}</span><h2>{w("Antes de planear tu estancia.", "Before planning your stay.")}</h2></div><div className="faq-list">{faq.map(([question, answer]) => <details className="faq-item" key={question}><summary>{question}</summary><p>{answer}</p></details>)}</div></div></section>
 
-      <section className="section booking" id="consulta"><div className="container booking-grid"><div><span className="eyebrow">{w("Consulta directa", "Direct inquiry")}</span><h2>{w("Cuéntanos las fechas de tu viaje.", "Tell us your travel dates.")}</h2><p>{w("Envía una solicitud para conocer disponibilidad y precio. La respuesta y la confirmación se realizan manualmente.", "Send an inquiry to ask about availability and price. Responses and confirmation are handled manually.")}</p><p className="subnote">{w("También puedes escribir directamente al", "You can also message us directly at")} <a href={`https://wa.me/${propertyConfig.booking.whatsappNumber}`}><strong>{propertyConfig.booking.whatsappDisplayNumber}</strong></a>.</p><AvailabilityCalendar /></div><BookingForm /></div></section>
+      <section className="section booking" id="consulta"><div className="container booking-grid"><div><span className="eyebrow">{w("Reserva directa", "Direct booking")}</span><h2>{w("Elige tus fechas y revisa el precio.", "Choose your dates and review the price.")}</h2><p>{w("Selecciona entrada y salida en el calendario. Las fechas ocupadas en Airbnb pueden aparecer aquí; las reservaciones de ambos calendarios deberán administrarse por separado.", "Select check-in and check-out in the calendar. Airbnb dates may appear here; bookings on the two calendars must be managed separately.")}</p><AvailabilityCalendar onSelectRange={setSelectedRange} /></div><BookingForm selectedRange={selectedRange} /></div></section>
 
-      <section className="cta"><div className="container"><span className="eyebrow">HOMUN · {w("Residencial Izamal", "Residencial Izamal")}</span><h2>{w("Tu hogar para disfrutar Cancún.", "Your home to enjoy Cancún.")}</h2><p>{w("Planea tu estancia y consulta tus fechas con nosotros.", "Plan your stay and ask us about your dates.")}</p><a className="button" href="#consulta">{w("Consultar disponibilidad", "Check availability")} ↗</a></div></section>
+      <section className="cta"><div className="container"><span className="eyebrow">HOMUN · {w("Residencial Izamal", "Residencial Izamal")}</span><h2>{w("Tu hogar para disfrutar Cancún.", "Your home to enjoy Cancún.")}</h2><p>{w("Elige tus fechas y revisa el precio de tu estancia.", "Choose your dates and review the price for your stay.")}</p><a className="button" href="#consulta">{w("Ver fechas y precio", "See dates and price")} ↗</a></div></section>
     </main>
-    <footer className="footer"><div className="container"><div className="footer-grid"><div><a className="brand" style={{color:"#e8eee7"}} href="#inicio">HOMUN</a><p>Homun en Residencial Izamal<br />Cancún, Quintana Roo, México</p></div><div><div className="footer-heading">{w("Explorar", "Explore")}</div><nav className="footer-nav"><a href="#alojamiento">{w("Alojamiento", "The apartment")}</a><a href="#amenidades">{w("Amenidades", "Amenities")}</a><a href="#ubicacion">{w("Ubicación", "Location")}</a><a href="#faq">{w("Preguntas frecuentes", "FAQ")}</a></nav></div><div><div className="footer-heading">{w("Contacto", "Contact")}</div><nav className="footer-nav"><a href={`https://wa.me/${propertyConfig.booking.whatsappNumber}`} target="_blank" rel="noreferrer">WhatsApp · {propertyConfig.booking.whatsappDisplayNumber}</a><a href={listing} target="_blank" rel="noreferrer">{w("Ver anuncio complementario en Airbnb", "View the listing on Airbnb")}</a><a href="/privacidad">{w("Aviso de privacidad", "Privacy notice")}</a></nav></div></div><div className="footer-bottom"><span>© {new Date().getFullYear()} Homun en Residencial Izamal</span><span>{w("Disponibilidad y reservaciones sujetas a confirmación manual.", "Availability and bookings subject to manual confirmation.")}</span></div></div></footer>
+    <footer className="footer"><div className="container"><div className="footer-grid"><div><a className="brand" style={{color:"#e8eee7"}} href="#inicio">HOMUN</a><p>Homun en Residencial Izamal<br />Cancún, Quintana Roo, México</p></div><div><div className="footer-heading">{w("Explorar", "Explore")}</div><nav className="footer-nav"><a href="#alojamiento">{w("Alojamiento", "The apartment")}</a><a href="#amenidades">{w("Amenidades", "Amenities")}</a><a href="#ubicacion">{w("Ubicación", "Location")}</a><a href="#faq">{w("Preguntas frecuentes", "FAQ")}</a></nav></div><div><div className="footer-heading">{w("Contacto", "Contact")}</div><nav className="footer-nav"><a href={`https://wa.me/${propertyConfig.booking.whatsappNumber}`} target="_blank" rel="noreferrer">WhatsApp · {propertyConfig.booking.whatsappDisplayNumber}</a><a href={listing} target="_blank" rel="noreferrer">{w("Ver anuncio complementario en Airbnb", "View the listing on Airbnb")}</a><a href="/privacidad">{w("Aviso de privacidad", "Privacy notice")}</a></nav></div></div><div className="footer-bottom"><span>© {new Date().getFullYear()} Homun en Residencial Izamal</span><span>{w("Las reservas de Airbnb y de esta página se administran por separado.", "Airbnb and website reservations are managed separately.")}</span></div></div></footer>
   </>;
 }
