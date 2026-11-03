@@ -37,9 +37,15 @@ export const propertyConfig = {
 } as const;
 
 export const galleryItems = [
-  { src: "sala.webp", alt: "Sala del departamento Homun", label: "Sala" },
-  { src: "cocina.webp", alt: "Cocina equipada del departamento", label: "Cocina" },
-  { src: "recamara-principal.webp", alt: "Recámara principal con cama King", label: "Recámara principal" },
-  { src: "recamara-secundaria-1.webp", alt: "Recámara con cama matrimonial", label: "Recámara" },
-  { src: "balcon.webp", alt: "Balcón del departamento", label: "Balcón" },
+  { src: "sala.jpeg", alt: "Sala del departamento con sofá, sillas y mesa de madera", label: "Sala" },
+  { src: "comedor.jpeg", alt: "Comedor de madera junto a la cocina", label: "Comedor" },
+  { src: "recamara-principal.jpeg", alt: "Recámara con cama y aire acondicionado", label: "Recámara" },
+  { src: "recamara-dos.jpeg", alt: "Segunda recámara con cama matrimonial", label: "Segunda recámara" },
+  { src: "recamara-tres.jpeg", alt: "Tercera recámara con cama matrimonial", label: "Tercera recámara" },
+  { src: "bano.jpeg", alt: "Lavabo del baño con amenidades", label: "Baño" },
+  { src: "alberca-dia.jpeg", alt: "Alberca compartida del residencial durante el día", label: "Alberca" },
+  { src: "alberca-atardecer.jpeg", alt: "Alberca compartida al atardecer", label: "Alberca al atardecer" },
+  { src: "camastros.jpeg", alt: "Camastros junto a la alberca compartida", label: "Camastros" },
+  { src: "areas-verdes.jpeg", alt: "Jardines y áreas verdes del residencial", label: "Áreas verdes" },
+  { src: "juegos.jpeg", alt: "Área de juegos infantiles del residencial", label: "Juegos infantiles" },
 ];
