@@ -20,7 +20,7 @@ Abre http://localhost:3000. Para validar una compilación de producción, ejecut
 3. Cuando tengas dominio, agrégalo al proyecto de Vercel y configura los registros DNS que indique el panel.
 4. Sustituye el dominio provisional del sitemap por el dominio definitivo en `src/app/sitemap.ts` y configura el canonical en metadatos.
 
-No se creó ni publicó repositorio remoto. No se compraron servicios o dominios.
+El código está publicado en https://github.com/yanlaracz/homun. No se compraron servicios ni dominios.
 
 ## Antes de publicar
 
