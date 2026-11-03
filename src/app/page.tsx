@@ -55,7 +55,7 @@ export default function HomePage() {
     <SiteHeader />
     <main>
       <section className="hero hero-boutique" id="inicio"><div className="hero-feature">
-        <Image className="hero-cover" src="/images/property/alberca-dia.jpeg" alt="Alberca y edificios de Residencial Izamal" fill priority sizes="100vw" />
+        <Image className="hero-cover" src="/images/property/sala.jpeg" alt="Sala de Homun con sofá y sillas de descanso" fill priority sizes="100vw" />
         <div className="hero-shade" />
         <div className="hero-feature-copy"><span className="hero-kicker">HOMUN <i /> {w("RESIDENCIAL IZAMAL · CANCÚN", "RESIDENCIAL IZAMAL · CANCÚN")}</span>
           <h1>{w("Tu refugio para disfrutar Cancún.", "Your retreat to enjoy Cancún.")}</h1>
@@ -63,7 +63,7 @@ export default function HomePage() {
           <div className="hero-facts"><span>{w("Hasta 6 huéspedes", "Up to 6 guests")}</span><span>3 {w("habitaciones", "bedrooms")}</span><span>2 {w("baños", "bathrooms")}</span></div>
           <div className="hero-actions"><a className="button hero-book" href="#consulta">{w("Reservar ahora", "Book your stay")} <span aria-hidden="true">↗</span></a><a className="scroll-link" href="#alojamiento">{w("Conocer la casa", "Explore the home")} ↓</a></div>
         </div>
-        <span className="hero-image-caption">{w("ALBERCA COMPARTIDA · RESIDENCIAL IZAMAL", "SHARED POOL · RESIDENCIAL IZAMAL")}</span>
+        <span className="hero-image-caption">{w("SALA · HOMUN EN RESIDENCIAL IZAMAL", "LIVING ROOM · HOMUN AT RESIDENCIAL IZAMAL")}</span>
       </div></section>
       <div className="container"><div className="stat-band"><div className="stat"><strong>6</strong><span>{w("huéspedes máximo", "guests maximum")}</span></div><div className="stat"><strong>3</strong><span>{w("habitaciones", "bedrooms")}</span></div><div className="stat"><strong>2</strong><span>{w("baños", "bathrooms")}</span></div><div className="stat"><strong>1</strong><span>{w("estacionamiento incluido", "parking space included")}</span></div></div></div>
 
