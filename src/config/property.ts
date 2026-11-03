@@ -29,7 +29,7 @@ export const propertyConfig = {
     onlinePaymentsEnabled: false,
     liveAvailabilityEnabled: false,
   },
-  media: { directory: "/images/property/", useOriginalPropertyPhotos: true, generatedPropertyPhotosAllowed: false },
+  media: { directory: "/images/property/", useOriginalPropertyPhotos: false, generatedPropertyPhotosAllowed: true },
   seo: {
     title: "Homun en Residencial Izamal | Departamento vacacional en Cancún",
     description: "Disfruta Cancún en un departamento de 3 habitaciones para hasta 6 huéspedes, con cocina equipada, balcón, alberca compartida y estacionamiento.",
@@ -37,9 +37,12 @@ export const propertyConfig = {
 } as const;
 
 export const galleryItems = [
-  { src: "sala-retocada.png", alt: "Sala del departamento con sofá, sillas y mesa de madera; foto con retoque digital", label: "Sala" },
-  { src: "recamara-retocada.png", alt: "Recámara con cama y aire acondicionado; foto con retoque digital", label: "Recámara" },
-  { src: "jardin-retocado.png", alt: "Jardines y áreas verdes del residencial; foto con retoque digital", label: "Áreas verdes" },
-  { src: "alberca-retocada.png", alt: "Alberca compartida del residencial; foto con retoque digital", label: "Alberca" },
-  { src: "camastros-retocados.png", alt: "Camastros junto a la alberca compartida; foto con retoque digital", label: "Camastros" },
+  { src: "recamara-principal-nueva.jpeg", alt: "Recámara principal con cama matrimonial", label: "Recámara principal" },
+  { src: "sala-principal.jpeg", alt: "Sala con sofá, sillas y mesa de madera", label: "Sala" },
+  { src: "comedor-seccion.jpeg", alt: "Comedor de madera junto a la cocina", label: "Comedor" },
+  { src: "juegos-residencial.jpeg", alt: "Área de juegos infantiles del residencial", label: "Juegos infantiles" },
+  { src: "alberca-atardecer-nueva.jpeg", alt: "Alberca compartida del residencial al atardecer", label: "Alberca" },
+  { src: "entrada-residencial.jpeg", alt: "Entrada de Residencial Izamal", label: "Residencial Izamal" },
+  { src: "recamara-secundaria-01.jpeg", alt: "Recámara con cama matrimonial y cortinas azul oscuro", label: "Segunda recámara" },
+  { src: "recamara-secundaria-02.jpeg", alt: "Recámara con cama matrimonial y mueble de madera", label: "Tercera recámara" },
 ];
