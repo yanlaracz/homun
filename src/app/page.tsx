@@ -25,7 +25,7 @@ const faqEs = [
   ["¿La alberca es privada o compartida?", "La alberca es compartida con otros residentes."],
   ["¿Cuánto cuesta la estancia?", "La tarifa es de $900 MXN por noche, excepto diciembre, cuando es de $1,000 MXN por noche. El sitio calcula un estimado según las fechas seleccionadas."],
   ["¿Cómo se paga y cuál es el depósito?", "El pago de la estancia será completo al reservar. Además se solicitará un depósito de seguridad en efectivo o transferencia, reembolsable al finalizar si no hay inconvenientes."],
-  ["¿Ya puedo pagar y confirmar la reserva en línea?", "El calendario y el cálculo de precio están en preparación. El pago seguro todavía no está habilitado, así que aún no se confirma ni se cobra una reserva desde la página."],
+  ["¿Ya puedo pagar y confirmar la reserva en línea?", "El pago en línea se procesa de forma segura con Stripe. La reserva queda confirmada únicamente después de completar el pago y ver la confirmación en esta página."],
   ["¿Cuáles son los horarios de entrada y salida?", "Los horarios están pendientes de confirmar. Consúltalos por WhatsApp antes de reservar."],
   ["¿Cuál es la política de cancelación?", "Con 30 días o más antes de la llegada, se reembolsa el total; de 14 a 29 días antes, se reembolsa el 50%; dentro de los últimos 14 días no hay reembolso."],
 ];
@@ -37,7 +37,7 @@ const faqEn = [
   ["Is the pool private or shared?", "The pool is shared with other residents."],
   ["How much does a stay cost?", "The rate is MXN $900 per night, except December, when it is MXN $1,000 per night. The site estimates the total for selected dates."],
   ["How do payment and the security deposit work?", "The full stay will be due at booking. A separate security deposit is paid in cash or by transfer and returned after check-out if there are no issues."],
-  ["Can I pay and confirm a booking online yet?", "The calendar and price estimate are being prepared. Secure online payment is not active yet, so the site cannot confirm or charge a booking yet."],
+  ["Can I pay and confirm a booking online yet?", "Online payments are processed securely through Stripe. A reservation is confirmed only after successful payment and confirmation on this site."],
   ["What are the check-in and check-out times?", "The times are still to be confirmed. Please ask on WhatsApp before booking."],
   ["What is the cancellation policy?", "30 or more days before arrival: full refund; 14–29 days: 50% refund; within 14 days: no refund."],
 ];
