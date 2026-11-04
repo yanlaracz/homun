@@ -1,5 +1,11 @@
 const reservationTable = "booking_reservations";
 
+export class SupabaseApiError extends Error {
+  constructor(readonly status: number) {
+    super("Booking database request failed");
+  }
+}
+
 export function getBookingEnv() {
   const supabaseUrl = process.env.SUPABASE_URL?.replace(/\/$/, "");
   const serviceKey = process.env.SUPABASE_SECRET_KEY;
@@ -19,7 +25,7 @@ export async function supabaseRpc<T>(name: string, body: Record<string, unknown>
     body: JSON.stringify(body),
     cache: "no-store",
   });
-  if (!response.ok) throw new Error("Booking database request failed");
+  if (!response.ok) throw new SupabaseApiError(response.status);
   return response.json() as Promise<T>;
 }
 

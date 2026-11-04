@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getBookingEnv, getSiteBusyDates } from "@/lib/booking-server";
+import { getBookingEnv, getSiteBusyDates, SupabaseApiError } from "@/lib/booking-server";
 import { getAirbnbBusyDatesFromFeed } from "@/lib/booking-validation";
 export const dynamic = "force-dynamic";
 export async function GET() {
@@ -15,8 +15,8 @@ export async function GET() {
   if (siteConfigured) {
     try {
       siteDates = await getSiteBusyDates(new Date().toISOString().slice(0, 10), new Date(Date.now() + 400 * 86400000).toISOString().slice(0, 10));
-    } catch {
-      return NextResponse.json({ configured: airbnb.configured, airbnbConfigured: airbnb.configured, siteConfigured, error: true, errorSource: "database", busyDates: [] }, { status: 503, headers: { "Cache-Control": "no-store" } });
+    } catch (error) {
+      return NextResponse.json({ configured: airbnb.configured, airbnbConfigured: airbnb.configured, siteConfigured, error: true, errorSource: "database", databaseStatus: error instanceof SupabaseApiError ? error.status : undefined, busyDates: [] }, { status: 503, headers: { "Cache-Control": "no-store" } });
     }
   }
   return NextResponse.json({ configured: airbnb.configured, airbnbConfigured: airbnb.configured, siteConfigured, busyDates: [...new Set([...airbnb.dates, ...siteDates])].sort() }, { headers: { "Cache-Control": "no-store" } });
