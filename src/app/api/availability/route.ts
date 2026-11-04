@@ -16,7 +16,7 @@ export async function GET() {
     try {
       siteDates = await getSiteBusyDates(new Date().toISOString().slice(0, 10), new Date(Date.now() + 400 * 86400000).toISOString().slice(0, 10));
     } catch (error) {
-      return NextResponse.json({ configured: airbnb.configured, airbnbConfigured: airbnb.configured, siteConfigured, error: true, errorSource: "database", databaseStatus: error instanceof SupabaseApiError ? error.status : undefined, busyDates: [] }, { status: 503, headers: { "Cache-Control": "no-store" } });
+      return NextResponse.json({ configured: airbnb.configured, airbnbConfigured: airbnb.configured, siteConfigured, error: true, errorSource: "database", databaseStatus: error instanceof SupabaseApiError ? error.status : undefined, databaseCode: error instanceof SupabaseApiError ? error.code : undefined, busyDates: [] }, { status: 503, headers: { "Cache-Control": "no-store" } });
     }
   }
   return NextResponse.json({ configured: airbnb.configured, airbnbConfigured: airbnb.configured, siteConfigured, busyDates: [...new Set([...airbnb.dates, ...siteDates])].sort() }, { headers: { "Cache-Control": "no-store" } });

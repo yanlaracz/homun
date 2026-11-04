@@ -1,7 +1,7 @@
 const reservationTable = "booking_reservations";
 
 export class SupabaseApiError extends Error {
-  constructor(readonly status: number) {
+  constructor(readonly status: number, readonly code?: string) {
     super("Booking database request failed");
   }
 }
@@ -25,7 +25,14 @@ export async function supabaseRpc<T>(name: string, body: Record<string, unknown>
     body: JSON.stringify(body),
     cache: "no-store",
   });
-  if (!response.ok) throw new SupabaseApiError(response.status);
+  if (!response.ok) {
+    let code: string | undefined;
+    try {
+      const payload = await response.json() as { code?: unknown };
+      if (typeof payload.code === "string" && /^[A-Z0-9_]{1,64}$/.test(payload.code)) code = payload.code;
+    } catch { /* Keep diagnostics limited to the HTTP status when the body isn't JSON. */ }
+    throw new SupabaseApiError(response.status, code);
+  }
   return response.json() as Promise<T>;
 }
 
