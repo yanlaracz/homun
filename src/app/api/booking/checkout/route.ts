@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://homun-six.vercel.app";
 function priceInCentavos(checkIn: string, checkOut: string) {
   const counts = getNightCounts(checkIn, checkOut);
-  return propertyConfig.pricing.temporaryCheckoutTotalMxn * 100;
+  return counts.regular * propertyConfig.pricing.standardNightlyRate * 100 + counts.december * propertyConfig.pricing.decemberNightlyRate * 100;
 }
 export async function POST(request: Request) {
   const { supabaseUrl, serviceKey, stripeKey } = getBookingEnv();
@@ -45,8 +45,8 @@ export async function POST(request: Request) {
   params.set("locale", "es");
   params.set("line_items[0][quantity]", "1"); params.set("line_items[0][price_data][currency]", "mxn");
   params.set("line_items[0][price_data][unit_amount]", String(priceInCentavos(checkIn, checkOut)));
-  params.set("line_items[0][price_data][product_data][name]", `PRUEBA TEMPORAL · Homun · ${length} noches`);
-  params.set("line_items[0][price_data][product_data][description]", `Pago real temporal de prueba: $10 MXN total. Entrada ${checkIn} · salida ${checkOut} · ${guests} huésped(es). No representa la tarifa real de hospedaje.`);
+  params.set("line_items[0][price_data][product_data][name]", `Homun · ${length} noches`);
+  params.set("line_items[0][price_data][product_data][description]", `Entrada ${checkIn} · salida ${checkOut} · ${guests} huésped(es). Depósito de seguridad por separado.`);
   params.set("metadata[reservation_id]", reservationId); params.set("metadata[check_in]", checkIn);
   params.set("metadata[check_out]", checkOut); params.set("metadata[guests]", String(guests));
   const sessionResponse = await fetch("https://api.stripe.com/v1/checkout/sessions", {
