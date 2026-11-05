@@ -55,6 +55,8 @@ const faqEn = [
 export default function HomePage() {
   const [en, setEn] = useState(false);
   const [selectedRange, setSelectedRange] = useState<{ checkIn: string; checkOut: string } | null>(null);
+  const [quickDates, setQuickDates] = useState({ checkIn: "", checkOut: "" });
+  const [calendarRequest, setCalendarRequest] = useState<{ checkIn: string; checkOut: string } | null>(null);
   useEffect(() => {
     const listener = (event: Event) => setEn((event as CustomEvent<string>).detail === "en");
     document.addEventListener("homun-language", listener);
@@ -74,7 +76,14 @@ export default function HomePage() {
         </div>
         <div className="hero-media"><Image src="/images/property/sala-principal.jpeg" alt="Sala del departamento Homun" fill priority sizes="(max-width: 900px) 100vw, 50vw" /></div>
       </div></section>
-      <div className="container"><div className="stat-band"><div className="stat"><strong>6</strong><span>{w("huéspedes máximo", "guests maximum")}</span></div><div className="stat"><strong>3</strong><span>{w("habitaciones", "bedrooms")}</span></div><div className="stat"><strong>2</strong><span>{w("baños", "bathrooms")}</span></div><div className="stat"><strong>1</strong><span>{w("estacionamiento incluido", "parking space included")}</span></div></div></div>
+      <div className="container"><div className="stat-band"><div className="stat"><strong>6</strong><span>{w("huéspedes máximo", "guests maximum")}</span></div><div className="stat"><strong>3</strong><span>{w("habitaciones", "bedrooms")}</span></div><div className="stat"><strong>2</strong><span>{w("baños", "bathrooms")}</span></div><div className="stat"><strong>1</strong><span>{w("estacionamiento incluido", "parking space included")}</span></div></div>
+        <form className="quick-booking" onSubmit={(event) => { event.preventDefault(); setCalendarRequest({ ...quickDates }); document.getElementById("consulta")?.scrollIntoView({ behavior: "smooth" }); }}>
+          <div className="quick-booking-copy"><strong>{w("Planea tu estancia", "Plan your stay")}</strong><span>{w("Elige tus fechas para consultar disponibilidad", "Choose your dates to check availability")}</span></div>
+          <label><span>{w("Entrada", "Check-in")}</span><input type="date" required value={quickDates.checkIn} onChange={(event) => setQuickDates({ ...quickDates, checkIn: event.target.value })} /></label>
+          <label><span>{w("Salida", "Check-out")}</span><input type="date" required min={quickDates.checkIn || undefined} value={quickDates.checkOut} onChange={(event) => setQuickDates({ ...quickDates, checkOut: event.target.value })} /></label>
+          <button className="button" type="submit">{w("Ver disponibilidad", "Check availability")} ↗</button>
+        </form>
+      </div>
 
       <section className="section" id="alojamiento"><div className="container"><div className="section-heading"><span className="eyebrow">{w("Una estancia a tu ritmo", "A stay at your own pace")}</span><h2>{w("Un espacio cómodo para compartir y descansar.", "A comfortable place to gather and unwind.")}</h2><p>{w("Homun reúne áreas para convivir y habitaciones independientes para tener espacio durante la estancia. Su cocina equipada y las comodidades esenciales facilitan una visita práctica a Cancún.", "Homun brings together shared living areas and separate bedrooms, with an equipped kitchen and everyday comforts for a practical visit to Cancún.")}</p></div><Gallery /></div></section>
 
@@ -93,7 +102,7 @@ export default function HomePage() {
 
       <section className="section" id="faq"><div className="container"><div className="section-heading"><span className="eyebrow">{w("Preguntas frecuentes", "Frequently asked questions")}</span><h2>{w("Antes de planear tu estancia.", "Before planning your stay.")}</h2></div><div className="faq-list">{faq.map(([question, answer]) => <details className="faq-item" key={question}><summary>{question}</summary><p>{answer}</p></details>)}</div></div></section>
 
-      <section className="section booking" id="consulta"><div className="container booking-grid"><div><span className="eyebrow">{w("Reserva directa", "Direct booking")}</span><h2>{w("Elige tus fechas y revisa el precio.", "Choose your dates and review the price.")}</h2><p>{w("Selecciona entrada y salida en el calendario. Las fechas ocupadas en Airbnb pueden aparecer aquí; las reservaciones de ambos calendarios deberán administrarse por separado.", "Select check-in and check-out in the calendar. Airbnb dates may appear here; bookings on the two calendars must be managed separately.")}</p><AvailabilityCalendar onSelectRange={setSelectedRange} /></div><BookingForm selectedRange={selectedRange} /></div></section>
+      <section className="section booking" id="consulta"><div className="container booking-grid"><div><span className="eyebrow">{w("Reserva directa", "Direct booking")}</span><h2>{w("Elige tus fechas y revisa el precio.", "Choose your dates and review the price.")}</h2><p>{w("Selecciona entrada y salida en el calendario. Las fechas ocupadas en Airbnb pueden aparecer aquí; las reservaciones de ambos calendarios deberán administrarse por separado.", "Select check-in and check-out in the calendar. Airbnb dates may appear here; bookings on the two calendars must be managed separately.")}</p><AvailabilityCalendar requestedRange={calendarRequest} onSelectRange={setSelectedRange} /></div><BookingForm selectedRange={selectedRange} /></div></section>
 
       <section className="cta"><div className="container"><span className="eyebrow">HOMUN · {w("Residencial Izamal", "Residencial Izamal")}</span><h2>{w("Tu hogar para disfrutar Cancún.", "Your home to enjoy Cancún.")}</h2><p>{w("Elige tus fechas y revisa el precio de tu estancia.", "Choose your dates and review the price for your stay.")}</p><a className="button" href="#consulta">{w("Ver fechas y precio", "See dates and price")} ↗</a></div></section>
     </main>

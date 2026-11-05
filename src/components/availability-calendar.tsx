@@ -7,7 +7,7 @@ const weekdays = ["L", "M", "M", "J", "V", "S", "D"];
 
 type DateRange = { checkIn: string; checkOut: string };
 
-export function AvailabilityCalendar({ onSelectRange }: { onSelectRange: (range: DateRange | null) => void }) {
+export function AvailabilityCalendar({ onSelectRange, requestedRange }: { onSelectRange: (range: DateRange | null) => void; requestedRange?: DateRange | null }) {
   const [month, setMonth] = useState(() => {
     const today = new Date();
     return new Date(today.getFullYear(), today.getMonth(), 1);
@@ -28,6 +28,42 @@ export function AvailabilityCalendar({ onSelectRange }: { onSelectRange: (range:
       .catch(() => setCalendar({ configured: true, busyDates: [], error: true }));
     return () => document.removeEventListener("homun-language", listener);
   }, []);
+
+  useEffect(() => {
+    if (!requestedRange) return;
+    if (!calendar) {
+      setChoosing(english ? "Checking your dates…" : "Revisando tus fechas…");
+      return;
+    }
+    const { checkIn, checkOut } = requestedRange;
+    if (calendar.error) {
+      setChoosing(english ? "Could not check Airbnb availability. Please contact us before paying." : "No pudimos consultar Airbnb. Contáctanos antes de pagar.");
+      return;
+    }
+    const todayIso = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}-${String(new Date().getDate()).padStart(2, "0")}`;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(checkIn) || !/^\d{4}-\d{2}-\d{2}$/.test(checkOut) || checkIn < todayIso || checkOut <= checkIn) {
+      setSelected(null);
+      onSelectRange(null);
+      setChoosing(english ? "Check-out must be after check-in, and dates must be today or later." : "La salida debe ser después de la entrada y las fechas deben ser de hoy en adelante.");
+      return;
+    }
+    const busyDates = new Set(calendar.busyDates);
+    const cursor = new Date(`${checkIn}T12:00:00Z`), last = new Date(`${checkOut}T12:00:00Z`);
+    while (cursor < last) {
+      if (busyDates.has(cursor.toISOString().slice(0, 10))) {
+        setSelected(null);
+        onSelectRange(null);
+        setChoosing(english ? "Those dates include unavailable nights. Choose another range in the calendar." : "Ese rango incluye noches no disponibles. Elige otras fechas en el calendario.");
+        return;
+      }
+      cursor.setUTCDate(cursor.getUTCDate() + 1);
+    }
+    const next = { checkIn, checkOut };
+    setMonth(new Date(`${checkIn}T12:00:00`));
+    setSelected(next);
+    onSelectRange(next);
+    setChoosing(english ? "Dates selected. Review the total and booking details below." : "Fechas seleccionadas. Revisa el total y los detalles de reserva abajo.");
+  }, [requestedRange, calendar, english, onSelectRange]);
 
   const days = useMemo(() => {
     const offset = (month.getDay() + 6) % 7;
