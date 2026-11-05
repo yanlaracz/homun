@@ -22,6 +22,14 @@ Abre http://localhost:3000. Para validar una compilación de producción, ejecut
 
 El código está publicado en https://github.com/yanlaracz/homun. No se compraron servicios ni dominios.
 
+## Panel privado de reservas
+
+- Panel: `/admin` en el dominio del sitio.
+- Antes de usarlo, configura `HOMUN_ADMIN_PASSWORD` como variable de entorno `Production` en Vercel. Debe tener al menos 24 caracteres. No la guardes en el código ni la compartas en chats; compártela con la otra persona anfitriona por un medio privado.
+- Guarda la variable y redepliega. La contraseña crea sesiones privadas HTTP-only que vencen después de 8 horas.
+- El panel lista hasta 100 reservas recientes y permite cancelar reservas confirmadas. La cancelación libera las fechas del iCal del sitio; Airbnb puede requerir actualizar su calendario importado.
+- Cancelar en el panel no procesa reembolsos en Stripe. Los pagos deben revisarse y reembolsarse por separado cuando corresponda.
+
 ## Antes de publicar
 
 - Añade y autoriza las fotos reales descritas en `public/images/property/README.md`.
