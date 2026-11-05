@@ -41,7 +41,7 @@ export async function POST(request: Request) {
   const params = new URLSearchParams();
   params.set("mode", "payment"); params.set("success_url", `${baseUrl}/reserva/confirmacion?session_id={CHECKOUT_SESSION_ID}`);
   params.set("cancel_url", `${baseUrl}/#consulta?reserva=cancelada`); params.set("expires_at", String(Math.floor(Date.now() / 1000) + 3600));
-  params.set("locale", "es"); params.set("payment_method_types[0]", "card");
+  params.set("locale", "es");
   params.set("line_items[0][quantity]", "1"); params.set("line_items[0][price_data][currency]", "mxn");
   params.set("line_items[0][price_data][unit_amount]", String(priceInCentavos(checkIn, checkOut)));
   params.set("line_items[0][price_data][product_data][name]", `Homun · ${length} noches`);
