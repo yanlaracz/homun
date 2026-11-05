@@ -1,12 +1,9 @@
 import { NextResponse } from "next/server";
 import { getBookingEnv, getNightCounts } from "@/lib/booking-server";
 import { getAirbnbBusyDatesFromFeed, getTodayIso, validIsoDate } from "@/lib/booking-validation";
-import { propertyConfig } from "@/config/property";
 export const dynamic = "force-dynamic";
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://homun-six.vercel.app";
 function priceInCentavos(checkIn: string, checkOut: string) {
-  const temporaryPrice = propertyConfig.pricing.temporaryCheckoutPriceMxn;
-  if (Number.isInteger(temporaryPrice) && temporaryPrice > 0) return temporaryPrice * 100;
   const counts = getNightCounts(checkIn, checkOut);
   return counts.regular * 90000 + counts.december * 100000;
 }
@@ -47,9 +44,8 @@ export async function POST(request: Request) {
   params.set("locale", "es");
   params.set("line_items[0][quantity]", "1"); params.set("line_items[0][price_data][currency]", "mxn");
   params.set("line_items[0][price_data][unit_amount]", String(priceInCentavos(checkIn, checkOut)));
-  const temporaryPaymentTest = propertyConfig.pricing.temporaryCheckoutPriceMxn > 0;
-  params.set("line_items[0][price_data][product_data][name]", temporaryPaymentTest ? "Homun · prueba temporal de pago" : `Homun · ${length} noches`);
-  params.set("line_items[0][price_data][product_data][description]", `${temporaryPaymentTest ? "PRECIO TEMPORAL DE PRUEBA: total $10 MXN. " : ""}Entrada ${checkIn} · salida ${checkOut} · ${guests} huésped(es). Depósito de seguridad por separado.`);
+  params.set("line_items[0][price_data][product_data][name]", `Homun · ${length} noches`);
+  params.set("line_items[0][price_data][product_data][description]", `Entrada ${checkIn} · salida ${checkOut} · ${guests} huésped(es). Depósito de seguridad por separado.`);
   params.set("metadata[reservation_id]", reservationId); params.set("metadata[check_in]", checkIn);
   params.set("metadata[check_out]", checkOut); params.set("metadata[guests]", String(guests));
   const sessionResponse = await fetch("https://api.stripe.com/v1/checkout/sessions", {
