@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { FormEvent } from "react";
+import Link from "next/link";
 
 type Reservation = {
   id: string;
@@ -97,7 +98,7 @@ export default function AdminPage() {
   }
 
   return <main className="admin-page"><div className="admin-wrap">
-    <a className="admin-back" href="/">← Volver al sitio</a>
+    <Link className="admin-back" href="/">← Volver al sitio</Link>
     {!authenticated ? <section className="admin-login-card">
       <span className="admin-eyebrow">HOMUN · PANEL PRIVADO</span>
       <h1>Administrar reservas</h1>
