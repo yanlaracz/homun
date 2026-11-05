@@ -51,13 +51,20 @@ export async function POST(request: Request) {
   const sessionResponse = await fetch("https://api.stripe.com/v1/checkout/sessions", {
     method: "POST", headers: { Authorization: "Bearer " + stripeKey, "Content-Type": "application/x-www-form-urlencoded" }, body: params,
   });
-  const session = await sessionResponse.json() as { id?: string; url?: string; error?: { message?: string } };
+  const session = await sessionResponse.json() as { id?: string; url?: string; error?: { type?: string; code?: string; message?: string; request_log_url?: string } };
   if (!sessionResponse.ok || !session.id || !session.url) {
+    const stripeErrorType = typeof session.error?.type === "string" && /^[a-z_]{1,48}$/.test(session.error.type) ? session.error.type : undefined;
+    const stripeErrorCode = typeof session.error?.code === "string" && /^[a-z0-9_]{1,64}$/.test(session.error.code) ? session.error.code : undefined;
+    console.error("[booking.checkout] Stripe Checkout Session creation failed", {
+      status: sessionResponse.status,
+      type: stripeErrorType,
+      code: stripeErrorCode,
+    });
     await fetch(`${supabaseUrl.replace(/\/$/, "")}/rest/v1/booking_reservations?id=eq.${reservationId}`, {
       method: "PATCH", headers: { apikey: serviceKey, "Content-Type": "application/json", Prefer: "return=minimal" },
       body: JSON.stringify({ status: "cancelled", expires_at: null }),
     });
-    return NextResponse.json({ error: "Stripe no pudo iniciar el pago. Intenta más tarde." }, { status: 502 });
+    return NextResponse.json({ error: "Stripe no pudo iniciar el pago.", stripeErrorType, stripeErrorCode }, { status: 502 });
   }
   const update = await fetch(`${supabaseUrl.replace(/\/$/, "")}/rest/v1/booking_reservations?id=eq.${reservationId}`, {
     method: "PATCH", headers: { apikey: serviceKey, "Content-Type": "application/json", Prefer: "return=minimal" },
