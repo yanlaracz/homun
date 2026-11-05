@@ -46,7 +46,7 @@ export async function POST(request: Request) {
   params.set("line_items[0][quantity]", "1"); params.set("line_items[0][price_data][currency]", "mxn");
   params.set("line_items[0][price_data][unit_amount]", String(priceInCentavos(checkIn, checkOut)));
   params.set("line_items[0][price_data][product_data][name]", `PRUEBA TEMPORAL · Homun · ${length} noches`);
-  params.set("line_items[0][price_data][product_data][description]", `Pago real temporal de prueba: $1 MXN total. Entrada ${checkIn} · salida ${checkOut} · ${guests} huésped(es). No representa la tarifa real de hospedaje.`);
+  params.set("line_items[0][price_data][product_data][description]", `Pago real temporal de prueba: $10 MXN total. Entrada ${checkIn} · salida ${checkOut} · ${guests} huésped(es). No representa la tarifa real de hospedaje.`);
   params.set("metadata[reservation_id]", reservationId); params.set("metadata[check_in]", checkIn);
   params.set("metadata[check_out]", checkOut); params.set("metadata[guests]", String(guests));
   const sessionResponse = await fetch("https://api.stripe.com/v1/checkout/sessions", {
