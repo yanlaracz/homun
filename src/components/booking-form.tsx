@@ -37,8 +37,9 @@ export function BookingForm({ selectedRange }: { selectedRange: DateRange | null
       const response = await fetch("/api/booking/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ checkIn: selectedRange.checkIn, checkOut: selectedRange.checkOut, guests: Number(guests) }) });
       const result = await response.json();
       if (!response.ok || !result.url) {
-        const diagnostic = [result.stripeErrorType, result.stripeErrorCode].filter((value: unknown) => typeof value === "string").join(" / ");
-        throw new Error((result.error || (english ? "Could not start payment." : "No se pudo iniciar el pago.")) + (diagnostic ? ` (${diagnostic})` : ""));
+        const diagnostic = [result.stripeErrorType, result.stripeErrorCode, result.stripeErrorParam].filter((value: unknown) => typeof value === "string").join(" / ");
+        const detail = typeof result.stripeErrorMessage === "string" ? ` ${result.stripeErrorMessage}` : "";
+        throw new Error((result.error || (english ? "Could not start payment." : "No se pudo iniciar el pago.")) + (diagnostic ? ` (${diagnostic})` : "") + detail);
       }
       window.location.assign(result.url);
     } catch (issue) { setError(issue instanceof Error ? issue.message : "No se pudo iniciar el pago."); setLoading(false); }
